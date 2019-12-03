@@ -3,7 +3,7 @@ package classes;
 public class User {
     private String login;
     private String password;
-    private Integer isAdmin;
+    private String isAdmin;
     private Integer id;
 
     public void setId(Integer id) {
@@ -30,17 +30,24 @@ public class User {
         this.password = password;
     }
 
-    public Integer isAdmin() {
+    public String isAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(Integer admin) {
+    public void setAdmin(String admin) {
         isAdmin = admin;
     }
 
-    public User(String login, String password, Integer isAdmin) {
+    public User(String login, String password, String isAdmin) {
         this.login = login;
         this.password = password;
         this.isAdmin = isAdmin;
+    }
+
+    public User(String login, String password, String isAdmin,Integer id) {
+        this.login = login;
+        this.password = password;
+        this.isAdmin = isAdmin;
+        this.id = id;
     }
 }

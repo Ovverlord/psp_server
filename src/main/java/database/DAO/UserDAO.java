@@ -9,10 +9,12 @@ public interface UserDAO {
     void add(User user);
 
     ResultSet getUser(User user);
-    List<User> getAll();
+    ResultSet getUserByLogin(User user);
+
+    ResultSet getAllUsers();
     User getByID(Integer id);
 
-    void update(User user);
+    String update(User user);
 
     void delete(User user);
 }

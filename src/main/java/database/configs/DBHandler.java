@@ -15,7 +15,7 @@ public class DBHandler extends Configs {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             dbConnection = DriverManager.getConnection(connectionString,dbUser,dbPass);
-            System.out.println("Подключение к БД");
+            //System.out.println("Подключение к БД");
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             System.out.println("Ошибка подключения к БД");
