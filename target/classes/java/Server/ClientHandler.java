@@ -1,15 +1,9 @@
 package Server;
 
 
-import classes.Equipment;
-import classes.Tariff;
-import classes.User;
-import classes.Worker;
+import classes.*;
 import database.configs.DBHandler;
-import database.service.EquipmentService;
-import database.service.TariffService;
-import database.service.UserService;
-import database.service.WorkerService;
+import database.service.*;
 import network.JSONParser;
 import network.Session;
 
@@ -522,6 +516,129 @@ public class ClientHandler implements Runnable {
                         TariffService tariffService = new TariffService();
                         tariffService.update(tariff);
                         break;
+                    }
+
+
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
+                    //MaterialsOperations
+
+
+                    case "getAllMaterials":
+                    {
+                        ArrayList<Material> materials = new ArrayList<Material>();
+                        MaterialService materialService = new MaterialService();
+                        ResultSet rs = materialService.getAllMaterials();
+                        try {
+                            while (rs.next()) {
+                                materials.add(new Material(rs.getString("name"),
+                                        rs.getDouble("unitcost"),
+                                        rs.getDouble("usedamount"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(materials.toArray(new Material[materials.size()]));
+                        materials.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+
+                    case "addMaterial":
+                    {
+                        Material material = JSONParser.objectFromJson(query[1], Material.class);
+                        MaterialService materialService = new MaterialService();
+                        materialService.add(material);
+                        break;
+                    }
+
+                    case "deleteMaterial":
+                    {
+                        Material material = JSONParser.objectFromJson(query[1], Material.class);
+                        MaterialService materialService = new MaterialService();
+                        materialService.delete(material);
+                        break;
+                    }
+
+
+                    case "editMaterial":
+                    {
+                        Material material = JSONParser.objectFromJson(query[1], Material.class);
+                        MaterialService materialService = new MaterialService();
+                        materialService.update(material);
+                        break;
+                    }
+
+                    case "searchMaterialByName":
+                    {
+                        ArrayList<Material> materials = new ArrayList<Material>();
+                        Material material = JSONParser.objectFromJson(query[1], Material.class);
+                        MaterialService materialService = new MaterialService();
+                        ResultSet rs = materialService.getMaterialByName(material);
+                        try {
+                            while (rs.next()) {
+                                materials.add(new Material(rs.getString("name"),
+                                        rs.getDouble("unitcost"),
+                                        rs.getDouble("usedamount"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(materials.toArray(new Material[materials.size()]));
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+
+                    case "searchMaterialByUnitCost":
+                    {
+                        ArrayList<Material> materials = new ArrayList<Material>();
+                        Material material = JSONParser.objectFromJson(query[1], Material.class);
+                        MaterialService materialService = new MaterialService();
+                        ResultSet rs = materialService.getMaterialByUnitCost(material);
+                        try {
+                            while (rs.next()) {
+                                materials.add(new Material(rs.getString("name"),
+                                        rs.getDouble("unitcost"),
+                                        rs.getDouble("usedamount"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(materials.toArray(new Material[materials.size()]));
+                        out.writeUTF(response);
+                        out.flush();
+                    }
+
+
+                    case "searchMaterialByUsedAmount":
+                    {
+                        ArrayList<Material> materials = new ArrayList<Material>();
+                        Material material = JSONParser.objectFromJson(query[1], Material.class);
+                        MaterialService materialService = new MaterialService();
+                        ResultSet rs = materialService.getMaterialByUsedAmount(material);
+                        try {
+                            while (rs.next()) {
+                                materials.add(new Material(rs.getString("name"),
+                                        rs.getDouble("unitcost"),
+                                        rs.getDouble("usedamount"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(materials.toArray(new Material[materials.size()]));
+                        out.writeUTF(response);
+                        out.flush();
                     }
 
                     //===================================================================================
