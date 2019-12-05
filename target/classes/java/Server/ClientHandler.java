@@ -5,9 +5,11 @@ package Server;
 
 import classes.Equipment;
 import classes.User;
+import classes.Worker;
 import database.configs.DBHandler;
 import database.service.EquipmentService;
 import database.service.UserService;
+import database.service.WorkerService;
 import network.JSONParser;
 import network.Session;
 
@@ -23,27 +25,22 @@ public class ClientHandler implements Runnable {
     private Server server;
     private Socket clientSocket = null;
 
-    DataInputStream in;
-    DataOutputStream out;
-
-
     public ClientHandler(Socket socket, Server server) {
         this.server = server;
         this.clientSocket = socket;
     }
 
-    String response;
-    String[] query;
-
     @Override
     public void run() {
-        Session session = Session.getSession(null, null, null);
         try {
-            System.out.println(clientSocket);
-            clients_count++;
+            Session session = new Session(null,null);
             DataInputStream in = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+            String response;
+            String[] query;
 
+            System.out.println(clientSocket);
+            clients_count++;
 
             System.out.println("Клиент подключился");
             System.out.println("Его порт: " + clientSocket.getPort());
@@ -75,7 +72,7 @@ public class ClientHandler implements Runnable {
                         if (flag > 0) {
                             response = isAdmin;
                             //session = new Session(user.getLogin(),admin,user.getId());
-                            session = Session.getSession(user.getLogin(), isAdmin, userID);
+                            session = new Session(user.getLogin(), userID);
                         } else {
                             response = "error";
                         }
@@ -83,11 +80,10 @@ public class ClientHandler implements Runnable {
                         out.writeUTF(response);
                         out.flush();
 
-
-//                        System.out.print("Текущая сессия после входа:");
-//                        System.out.println(session.getCurrentLogin());
-//                        System.out.print("ID:");
-//                        System.out.println(session.getCurrentID());
+                        System.out.print("Текущая сессия после входа:");
+                        System.out.println(session.getCurrentLogin());
+                        System.out.print("ID:");
+                        System.out.println(session.getCurrentID());
                         break;
                     }
 
@@ -125,7 +121,7 @@ public class ClientHandler implements Runnable {
                                 isAdmin = "1";
                             }
                             //session = new Session(user.getLogin(),isAdmin,user.getId());
-                            session = Session.getSession(user.getLogin(), isAdmin, userID);
+                            session = new Session(user.getLogin(), userID);
                         }
                         out.writeUTF(response);
                         out.flush();
@@ -346,9 +342,141 @@ public class ClientHandler implements Runnable {
                     //===================================================================================
                     //===================================================================================
                     //===================================================================================
+                    //WorkerOperations
+
+                    case "getAllWorkers": {
+                        ArrayList<Worker> workers = new ArrayList<Worker>();
+                        WorkerService workerService = new WorkerService();
+                        ResultSet rs = workerService.getAllWorkers();
+                        try {
+                            while (rs.next()) {
+                                workers.add(new Worker(rs.getString("surname"),
+                                        rs.getString("name"),
+                                        rs.getString("lastname"),
+                                        rs.getString("position"),
+                                        rs.getInt("wage"),
+                                        rs.getInt("hoursworked"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(workers.toArray(new Worker[workers.size()]));
+                        workers.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+                    case "addWorker":
+                    {
+                        Worker worker = JSONParser.objectFromJson(query[1], Worker.class);
+                        WorkerService workerService = new WorkerService();
+                        workerService.add(worker);
+                        break;
+                    }
+
+                    case "deleteWorker":
+                        {
+                        Worker worker = JSONParser.objectFromJson(query[1], Worker.class);
+                        WorkerService workerService = new WorkerService();
+                        workerService.delete(worker);
+                        break;
+                    }
+
+                    case "editWorker": {
+                        Worker worker = JSONParser.objectFromJson(query[1], Worker.class);
+                        WorkerService workerService = new WorkerService();
+                        workerService.update(worker);
+                        break;
+                    }
+
+
+                    case "searchWorkerBySurname":
+                    {
+                        ArrayList<Worker> workers = new ArrayList<Worker>();
+                        Worker worker = JSONParser.objectFromJson(query[1], Worker.class);
+                        WorkerService workerService = new WorkerService();
+                        ResultSet rs = workerService.getWorkerBySurname(worker);
+                        try {
+                            while (rs.next()) {
+                                workers.add(new Worker(rs.getString("surname"),
+                                        rs.getString("name"),
+                                        rs.getString("lastname"),
+                                        rs.getString("position"),
+                                        rs.getInt("wage"),
+                                        rs.getInt("hoursworked"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(workers.toArray(new Worker[workers.size()]));
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+
+                    case "searchWorkerByPosition":
+                    {
+                        ArrayList<Worker> workers = new ArrayList<Worker>();
+                        Worker worker = JSONParser.objectFromJson(query[1], Worker.class);
+                        WorkerService workerService = new WorkerService();
+                        ResultSet rs = workerService.getWorkerByPosition(worker);
+                        try {
+                            while (rs.next()) {
+                                workers.add(new Worker(rs.getString("surname"),
+                                        rs.getString("name"),
+                                        rs.getString("lastname"),
+                                        rs.getString("position"),
+                                        rs.getInt("wage"),
+                                        rs.getInt("hoursworked"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(workers.toArray(new Worker[workers.size()]));
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+
+                    case "searchWorkerByHoursWorked":
+                    {
+                        ArrayList<Worker> workers = new ArrayList<Worker>();
+                        Worker worker = JSONParser.objectFromJson(query[1], Worker.class);
+                        WorkerService workerService = new WorkerService();
+                        ResultSet rs = workerService.getWorkerByHoursWorked(worker);
+                        try {
+                            while (rs.next()) {
+                                workers.add(new Worker(rs.getString("surname"),
+                                        rs.getString("name"),
+                                        rs.getString("lastname"),
+                                        rs.getString("position"),
+                                        rs.getInt("wage"),
+                                        rs.getInt("hoursworked"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(workers.toArray(new Worker[workers.size()]));
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
                     //Exit
                     case "endSession": {
-                        session = Session.getSession(null, null, null);
+                        session = new Session(null,null);
                         break;
                     }
 

@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class EquipmentService extends DBHandler implements EquipmentDAO {
     Connection dbConnection = getDbConnection();
-    Session session = Session.getSession("nothing","nothing",-1);
+    Session session = new Session("nothing",-1);
     @Override
     public ResultSet getAllEquipment() {
         ResultSet result = null;
@@ -22,6 +22,7 @@ public class EquipmentService extends DBHandler implements EquipmentDAO {
                 " = ? ";
         try
         {
+            System.out.println(session.getCurrentID());
             PreparedStatement prSt = null;
             prSt = dbConnection.prepareStatement(select);
             prSt.setString(1, String.valueOf(session.getCurrentID()));
@@ -95,7 +96,6 @@ public class EquipmentService extends DBHandler implements EquipmentDAO {
 
         try
         {
-            System.out.println(equipment.getName());
             PreparedStatement prSt = null;
             prSt = dbConnection.prepareStatement(update);
             prSt.setString(1,equipment.getName());

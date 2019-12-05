@@ -1,43 +1,19 @@
 package network;
 
 public class Session {
-    String currentLogin;
-    String currentIsAdmin;
-    Integer currentID;
-    static Session session;
 
+    static Integer currentID;
+    static String currentLogin;
 
-    Session(String currentLogin, String currentIsAdmin, Integer currentID) {
-        this.currentLogin = currentLogin;
-        this.currentIsAdmin = currentIsAdmin;
-        this.currentID = currentID;
-    }
-
-    public static Session getSession(String currentLogin,String currentIsAdmin,Integer currentID) {
-        if (session == null) {
-            session = new Session(currentLogin,currentIsAdmin,currentID);
-        }
-        if(currentLogin==null)
+    public Session(String currentLogin,Integer currentID) {
+        if(this.currentID==null || currentID==null)
         {
-            session = null;
+            this.currentID = currentID;
         }
-        return session;
-    }
-
-    public String getCurrentLogin() {
-        return currentLogin;
-    }
-
-    public void setCurrentLogin(String currentLogin) {
-        this.currentLogin = currentLogin;
-    }
-
-    public String getCurrentIsAdmin() {
-        return currentIsAdmin;
-    }
-
-    public void setCurrentIsAdmin(String currentIsAdmin) {
-        this.currentIsAdmin = currentIsAdmin;
+        if(this.currentLogin==null || currentLogin==null)
+        {
+            this.currentLogin = currentLogin;
+        }
     }
 
     public Integer getCurrentID() {
@@ -47,4 +23,14 @@ public class Session {
     public void setCurrentID(Integer currentID) {
         this.currentID = currentID;
     }
+
+    public static String getCurrentLogin() {
+        return currentLogin;
+    }
+
+    public static void setCurrentLogin(String currentLogin) {
+        Session.currentLogin = currentLogin;
+    }
+
+
 }
