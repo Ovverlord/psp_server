@@ -106,11 +106,6 @@ public class UserService extends DBHandler implements UserDAO {
     }
 
     @Override
-    public User getByID(Integer id) {
-        return null;
-    }
-
-    @Override
     public String update(User user) {
         String update = "UPDATE " + UserTableConsts.USER_TABLE
                 + " SET " + UserTableConsts.USER_LOGIN + " = ? "

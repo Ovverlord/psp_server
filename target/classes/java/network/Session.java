@@ -7,18 +7,22 @@ public class Session {
     static Session session;
 
 
-    public Session(String currentLogin, String currentIsAdmin, Integer currentID) {
+    Session(String currentLogin, String currentIsAdmin, Integer currentID) {
         this.currentLogin = currentLogin;
         this.currentIsAdmin = currentIsAdmin;
         this.currentID = currentID;
     }
 
-//    public static Session getInstance(String currentLogin,String currentIsAdmin,Integer currentID) {
-//        if (session == null) {
-//            session = new Session(currentLogin,currentIsAdmin,currentID);
-//        }
-//        return session;
-//    }
+    public static Session getSession(String currentLogin,String currentIsAdmin,Integer currentID) {
+        if (session == null) {
+            session = new Session(currentLogin,currentIsAdmin,currentID);
+        }
+        if(currentLogin==null)
+        {
+            session = null;
+        }
+        return session;
+    }
 
     public String getCurrentLogin() {
         return currentLogin;
