@@ -1,13 +1,13 @@
 package Server;
 
 
-//import classes.Equipment;
-
 import classes.Equipment;
+import classes.Tariff;
 import classes.User;
 import classes.Worker;
 import database.configs.DBHandler;
 import database.service.EquipmentService;
+import database.service.TariffService;
 import database.service.UserService;
 import database.service.WorkerService;
 import network.JSONParser;
@@ -377,7 +377,7 @@ public class ClientHandler implements Runnable {
                     }
 
                     case "deleteWorker":
-                        {
+                    {
                         Worker worker = JSONParser.objectFromJson(query[1], Worker.class);
                         WorkerService workerService = new WorkerService();
                         workerService.delete(worker);
@@ -466,6 +466,61 @@ public class ClientHandler implements Runnable {
                         response = JSONParser.jsonFromObject(workers.toArray(new Worker[workers.size()]));
                         out.writeUTF(response);
                         out.flush();
+                        break;
+                    }
+
+
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
+                    //TariffOperations
+
+                    case "getTariff":
+                    {
+                        ArrayList<Tariff> tariffs = new ArrayList<Tariff>();
+                        TariffService tariffService = new TariffService();
+                        ResultSet rs = tariffService.getTariff();
+                        try {
+                            while (rs.next()) {
+                                tariffs.add(new Tariff(rs.getDouble("energycost"),
+                                        rs.getDouble("gascost"),
+                                        rs.getDouble("rentcost"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(tariffs.toArray(new Tariff[tariffs.size()]));
+                        tariffs.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+
+                    case "addTariff":
+                    {
+                        Tariff tariff = JSONParser.objectFromJson(query[1], Tariff.class);
+                        TariffService tariffService = new TariffService();
+                        tariffService.add(tariff);
+                        break;
+                    }
+
+                    case "deleteTariff":
+                    {
+                        Tariff tariff = JSONParser.objectFromJson(query[1], Tariff.class);
+                        TariffService tariffService = new TariffService();
+                        tariffService.delete(tariff);
+                        break;
+                    }
+
+                    case "editTariff":
+                    {
+                        Tariff tariff = JSONParser.objectFromJson(query[1], Tariff.class);
+                        TariffService tariffService = new TariffService();
+                        tariffService.update(tariff);
                         break;
                     }
 

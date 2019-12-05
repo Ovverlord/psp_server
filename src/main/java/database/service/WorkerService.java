@@ -33,7 +33,6 @@ public class WorkerService extends DBHandler implements WorkerDAO {
             ex.printStackTrace();
         }
         return result;
-        //return null;
     }
 
 
