@@ -13,9 +13,11 @@ import java.sql.SQLException;
 
 public class MaterialService extends DBHandler implements MaterialDAO {
     Connection dbConnection = getDbConnection();
-    Session session = new Session("nothing",-1);
+    Session session = Session.getInstance("login",-1);
     @Override
     public ResultSet getAllMaterials() {
+        System.out.println("getAllMetrials");
+
         ResultSet result = null;
         String select = "SELECT * FROM " + MaterialTableConsts.MATERIAL_TABLE + " WHERE "
                 + MaterialTableConsts.MATERIAL_USERID +

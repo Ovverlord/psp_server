@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class EquipmentService extends DBHandler implements EquipmentDAO {
     Connection dbConnection = getDbConnection();
-    Session session = new Session("nothing",-1);
+    Session session = Session.getInstance("login",-1);
     @Override
     public ResultSet getAllEquipment() {
         ResultSet result = null;

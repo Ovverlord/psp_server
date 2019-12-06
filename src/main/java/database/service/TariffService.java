@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class TariffService extends DBHandler implements TariffDAO {
     Connection dbConnection = getDbConnection();
-    Session session = new Session("nothing",-1);
+    Session session = Session.getInstance("login",-1);
     @Override
     public void add(Tariff tariff) {
         String insert = "INSERT INTO " + TariffTableConsts.TARIFF_TABLE + "("

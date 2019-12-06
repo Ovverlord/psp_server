@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClientHandler implements Runnable {
     private static int clients_count = 0;
@@ -27,7 +29,7 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            Session session = new Session(null,null);
+            Session session = Session.getInstance("notInitialize",-1);
             DataInputStream in = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
             String response;
@@ -66,7 +68,8 @@ public class ClientHandler implements Runnable {
                         if (flag > 0) {
                             response = isAdmin;
                             //session = new Session(user.getLogin(),admin,user.getId());
-                            session = new Session(user.getLogin(), userID);
+                            //session = new Session(user.getLogin(), userID);
+                            session = Session.getInstance(user.getLogin(), userID);
                         } else {
                             response = "error";
                         }
@@ -74,10 +77,10 @@ public class ClientHandler implements Runnable {
                         out.writeUTF(response);
                         out.flush();
 
-                        System.out.print("Текущая сессия после входа:");
-                        System.out.println(session.getCurrentLogin());
-                        System.out.print("ID:");
-                        System.out.println(session.getCurrentID());
+//                        System.out.print("Текущая сессия после входа:");
+//                        System.out.println(session.getCurrentLogin());
+//                        System.out.print("ID:");
+//                        System.out.println(session.getCurrentID());
                         break;
                     }
 
@@ -115,7 +118,8 @@ public class ClientHandler implements Runnable {
                                 isAdmin = "1";
                             }
                             //session = new Session(user.getLogin(),isAdmin,user.getId());
-                            session = new Session(user.getLogin(), userID);
+                            //session = new Session(user.getLogin(), userID);
+                            Session.getInstance(user.getLogin(), userID);
                         }
                         out.writeUTF(response);
                         out.flush();
@@ -241,8 +245,8 @@ public class ClientHandler implements Runnable {
                                 equipment.add(new Equipment(rs.getString("name"),
                                         rs.getString("model"),
                                         rs.getInt("hoursworked"),
-                                        rs.getInt("energy"),
-                                        rs.getInt("gas"),
+                                        rs.getDouble("energy"),
+                                        rs.getDouble("gas"),
                                         rs.getInt("id")));
                             }
                         } catch (Exception ex) {
@@ -292,8 +296,8 @@ public class ClientHandler implements Runnable {
                                 equipment_list.add(new Equipment(rs.getString("name"),
                                         rs.getString("model"),
                                         rs.getInt("hoursworked"),
-                                        rs.getInt("energy"),
-                                        rs.getInt("gas"),
+                                        rs.getDouble("energy"),
+                                        rs.getDouble("gas"),
                                         rs.getInt("id")));
                             }
                         } catch (Exception ex) {
@@ -317,8 +321,8 @@ public class ClientHandler implements Runnable {
                                 equipment_list.add(new Equipment(rs.getString("name"),
                                         rs.getString("model"),
                                         rs.getInt("hoursworked"),
-                                        rs.getInt("energy"),
-                                        rs.getInt("gas"),
+                                        rs.getDouble("energy"),
+                                        rs.getDouble("gas"),
                                         rs.getInt("id")));
                             }
                         } catch (Exception ex) {
@@ -646,9 +650,151 @@ public class ClientHandler implements Runnable {
                     //===================================================================================
                     //===================================================================================
                     //===================================================================================
+                    //ResultOperations
+
+
+                    case "calculateCost":
+                    {
+                        Result result = JSONParser.objectFromJson(query[1], Result.class);
+                        ResultService resultService = new ResultService();
+                        result = resultService.calculateCost(result);
+                        response = JSONParser.jsonFromObject(result);
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+                    case "saveResult":
+                    {
+                        Result result = JSONParser.objectFromJson(query[1], Result.class);
+                        ResultService resultService = new ResultService();
+                        resultService.saveResult(result);
+                        break;
+                    }
+
+                    case "deleteResult":
+                    {
+                        Result result = JSONParser.objectFromJson(query[1], Result.class);
+                        ResultService resultService = new ResultService();
+                        resultService.delete(result);
+                        break;
+                    }
+
+                    case "getAllResults":
+                    {
+                        ArrayList<Result> results = new ArrayList<Result>();
+                        ResultService resultService = new ResultService();
+                        ResultSet rs = resultService.getAllResults();
+                        try {
+                            while (rs.next()) {
+                                results.add(new Result(rs.getDouble("finalEnergyCost"),
+                                        rs.getDouble("finalGasCost"),
+                                        rs.getDouble("finalRentCost"),
+                                        rs.getInt("finalWageCost"),
+                                        rs.getDouble("finalMaterialCost"),
+                                        rs.getDouble("finalCost"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(results.toArray(new Result[results.size()]));
+                        results.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+
+                    case "searchResultByCost":
+                    {
+                        ArrayList<Result> results = new ArrayList<Result>();
+                        Result result = JSONParser.objectFromJson(query[1], Result.class);
+                        ResultService resultService = new ResultService();
+                        ResultSet rs = resultService.getResultByCost(result);
+                        try {
+                            while (rs.next()) {
+                                results.add(new Result(rs.getDouble("finalEnergyCost"),
+                                        rs.getDouble("finalGasCost"),
+                                        rs.getDouble("finalRentCost"),
+                                        rs.getInt("finalWageCost"),
+                                        rs.getDouble("finalMaterialCost"),
+                                        rs.getDouble("finalCost"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(results.toArray(new Result[results.size()]));
+                        results.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+                    case "searchResultByWageCost":
+                    {
+                        ArrayList<Result> results = new ArrayList<Result>();
+                        Result result = JSONParser.objectFromJson(query[1], Result.class);
+                        ResultService resultService = new ResultService();
+                        ResultSet rs = resultService.getResultByWageCost(result);
+                        try {
+                            while (rs.next()) {
+                                results.add(new Result(rs.getDouble("finalEnergyCost"),
+                                        rs.getDouble("finalGasCost"),
+                                        rs.getDouble("finalRentCost"),
+                                        rs.getInt("finalWageCost"),
+                                        rs.getDouble("finalMaterialCost"),
+                                        rs.getDouble("finalCost"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(results.toArray(new Result[results.size()]));
+                        results.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+
+                    case "searchResultByMaterialCost":
+                    {
+                        ArrayList<Result> results = new ArrayList<Result>();
+                        Result result = JSONParser.objectFromJson(query[1], Result.class);
+                        ResultService resultService = new ResultService();
+                        ResultSet rs = resultService.getResultByMaterialCost(result);
+                        try {
+                            while (rs.next()) {
+                                results.add(new Result(rs.getDouble("finalEnergyCost"),
+                                        rs.getDouble("finalGasCost"),
+                                        rs.getDouble("finalRentCost"),
+                                        rs.getInt("finalWageCost"),
+                                        rs.getDouble("finalMaterialCost"),
+                                        rs.getDouble("finalCost"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(results.toArray(new Result[results.size()]));
+                        results.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
+                    //===================================================================================
                     //Exit
                     case "endSession": {
-                        session = new Session(null,null);
+                        session = Session.getInstance(null,null);
+                       //session.cleanUserSession();
                         break;
                     }
 

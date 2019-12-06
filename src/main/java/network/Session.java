@@ -2,19 +2,30 @@ package network;
 
 public class Session {
 
-    static Integer currentID;
-    static String currentLogin;
+    private static Integer currentID;
+    private static String currentLogin;
+    static Session session;
 
-    public Session(String currentLogin,Integer currentID) {
-        if(this.currentID==null || currentID==null)
-        {
+    Session(String currentLogin,Integer currentID) {
             this.currentID = currentID;
-        }
-        if(this.currentLogin==null || currentLogin==null)
-        {
             this.currentLogin = currentLogin;
-        }
     }
+
+    public static Session getInstance(String currentLogin,Integer currentID) {
+        if(currentLogin==null && currentID==null)
+        {
+            session=null;
+
+        }
+        else if(currentLogin != "notInitialize" && currentID !=-1)
+        {
+            if (session == null) {
+                session = new Session(currentLogin,currentID);
+            }
+        }
+        return session;
+    }
+
 
     public Integer getCurrentID() {
         return currentID;

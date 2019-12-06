@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class WorkerService extends DBHandler implements WorkerDAO {
     Connection dbConnection = getDbConnection();
-    Session session = new Session("nothing",-1);
+    Session session = Session.getInstance("login",-1);
     @Override
     public ResultSet getAllWorkers() {
         ResultSet result = null;
