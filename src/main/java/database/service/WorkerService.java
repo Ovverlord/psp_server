@@ -22,7 +22,6 @@ public class WorkerService extends DBHandler implements WorkerDAO {
                 " = ? ";
         try
         {
-            System.out.println(session.getCurrentID());
             PreparedStatement prSt = null;
             prSt = dbConnection.prepareStatement(select);
             prSt.setString(1, String.valueOf(session.getCurrentID()));

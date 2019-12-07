@@ -12,4 +12,5 @@ public interface ResultDAO {
     ResultSet getResultByWageCost(Result result);
     ResultSet getResultByMaterialCost(Result result);
     void delete(Result result);
+    void generateReport(Result result);
 }

@@ -5,6 +5,11 @@ import database.DAO.ResultDAO;
 import database.configs.DBHandler;
 import database.consts.*;
 import network.Session;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -143,7 +148,6 @@ public class ResultService extends DBHandler implements ResultDAO {
                 " = ? ";
         try
         {
-            System.out.println(session.getCurrentID());
             PreparedStatement prSt = null;
             prSt = dbConnection.prepareStatement(select);
             prSt.setString(1, String.valueOf(session.getCurrentID()));
@@ -235,6 +239,41 @@ public class ResultService extends DBHandler implements ResultDAO {
             prSt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void generateReport(Result result)
+    {
+        try(FileWriter writer = new FileWriter("UserReports\\Cost " + result.getFinalCost() + ".txt", false))
+        {
+            double energyPercent = new BigDecimal(result.getFinalEnergyCost()*100
+                    /result.getFinalCost()).setScale(2, RoundingMode.UP).doubleValue();
+            double gasPercent = new BigDecimal(result.getFinalGasCost()*100
+                    /result.getFinalCost()).setScale(2, RoundingMode.UP).doubleValue();
+            double wagePercent = new BigDecimal(result.getFinalWageCost()*100
+                    /result.getFinalCost()).setScale(2, RoundingMode.UP).doubleValue();
+            double materialPercent = new BigDecimal(result.getFinalMaterialCost()*100
+                    /result.getFinalCost()).setScale(2, RoundingMode.UP).doubleValue();
+            double rentPercent = new BigDecimal(result.getFinalRentCost()*100
+                    /result.getFinalCost()).setScale(2, RoundingMode.UP).doubleValue();
+                    writer.write("Затраты на энергию: " + String.valueOf(result.getFinalEnergyCost())
+                    + ";  " + energyPercent + "%\n");
+            writer.write("Затраты на газ: " + String.valueOf(result.getFinalGasCost())
+                    + ";  " + gasPercent + "%\n");
+            writer.write("Затраты на зарплату: " + String.valueOf(result.getFinalWageCost())
+                    + ";  " + wagePercent + "%\n");
+            writer.write("Затраты на материалы: " + String.valueOf(result.getFinalMaterialCost())
+                    + ";  " + materialPercent + "%\n");
+            writer.write("Затраты на аренду: " + String.valueOf(result.getFinalRentCost())
+                    + ";  " + rentPercent + "%\n");
+            writer.write("Себестоимость выпуска: " + String.valueOf(result.getFinalCost())
+                    + ";  \n");
+            writer.flush();
+        }
+        catch(IOException ex){
+
+            System.out.println(ex.getMessage());
         }
     }
 }

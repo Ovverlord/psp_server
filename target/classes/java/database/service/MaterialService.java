@@ -16,15 +16,12 @@ public class MaterialService extends DBHandler implements MaterialDAO {
     Session session = Session.getInstance("login",-1);
     @Override
     public ResultSet getAllMaterials() {
-        System.out.println("getAllMetrials");
-
         ResultSet result = null;
         String select = "SELECT * FROM " + MaterialTableConsts.MATERIAL_TABLE + " WHERE "
                 + MaterialTableConsts.MATERIAL_USERID +
                 " = ? ";
         try
         {
-            System.out.println(session.getCurrentID());
             PreparedStatement prSt = null;
             prSt = dbConnection.prepareStatement(select);
             prSt.setString(1, String.valueOf(session.getCurrentID()));

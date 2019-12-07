@@ -672,6 +672,14 @@ public class ClientHandler implements Runnable {
                         break;
                     }
 
+                    case "generateReport":
+                    {
+                        Result result = JSONParser.objectFromJson(query[1], Result.class);
+                        ResultService resultService = new ResultService();
+                        resultService.generateReport(result);
+                        break;
+                    }
+
                     case "deleteResult":
                     {
                         Result result = JSONParser.objectFromJson(query[1], Result.class);
