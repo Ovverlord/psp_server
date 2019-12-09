@@ -154,7 +154,6 @@ public class ClientHandler implements Runnable {
                         break;
                     }
 
-
                     case "addUser": {
                         User user = JSONParser.objectFromJson(query[1], User.class);
                         UserService userService = new UserService();
@@ -781,6 +780,141 @@ public class ClientHandler implements Runnable {
                                         rs.getInt("finalWageCost"),
                                         rs.getDouble("finalMaterialCost"),
                                         rs.getDouble("finalCost"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(results.toArray(new Result[results.size()]));
+                        results.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+
+                    case "getAllUsersResults":
+                    {
+                        ArrayList<Result> results = new ArrayList<Result>();
+                        ResultService resultService = new ResultService();
+                        ResultSet rs = resultService.getAllUsersResults();
+                        try {
+                            while (rs.next()) {
+                                results.add(new Result(rs.getDouble("finalEnergyCost"),
+                                        rs.getDouble("finalGasCost"),
+                                        rs.getDouble("finalRentCost"),
+                                        rs.getInt("finalWageCost"),
+                                        rs.getDouble("finalMaterialCost"),
+                                        rs.getDouble("finalCost"),
+                                        rs.getString("login"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(results.toArray(new Result[results.size()]));
+                        results.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+                    case "searchResultUserByCost":
+                    {
+                        ArrayList<Result> results = new ArrayList<Result>();
+                        Result result = JSONParser.objectFromJson(query[1], Result.class);
+                        ResultService resultService = new ResultService();
+                        ResultSet rs = resultService.getResultUserByCost(result);
+                        try {
+                            while (rs.next()) {
+                                results.add(new Result(rs.getDouble("finalEnergyCost"),
+                                        rs.getDouble("finalGasCost"),
+                                        rs.getDouble("finalRentCost"),
+                                        rs.getInt("finalWageCost"),
+                                        rs.getDouble("finalMaterialCost"),
+                                        rs.getDouble("finalCost"),
+                                        rs.getString("login"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(results.toArray(new Result[results.size()]));
+                        results.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+                    case "searchResultUserByWageCost":
+                    {
+                        ArrayList<Result> results = new ArrayList<Result>();
+                        Result result = JSONParser.objectFromJson(query[1], Result.class);
+                        ResultService resultService = new ResultService();
+                        ResultSet rs = resultService.getResultUserByWageCost(result);
+                        try {
+                            while (rs.next()) {
+                                results.add(new Result(rs.getDouble("finalEnergyCost"),
+                                        rs.getDouble("finalGasCost"),
+                                        rs.getDouble("finalRentCost"),
+                                        rs.getInt("finalWageCost"),
+                                        rs.getDouble("finalMaterialCost"),
+                                        rs.getDouble("finalCost"),
+                                        rs.getString("login"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(results.toArray(new Result[results.size()]));
+                        results.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+                    case "searchResultUserByMaterialCost":
+                    {
+                        ArrayList<Result> results = new ArrayList<Result>();
+                        Result result = JSONParser.objectFromJson(query[1], Result.class);
+                        ResultService resultService = new ResultService();
+                        ResultSet rs = resultService.getResultUserByMaterialCost(result);
+                        try {
+                            while (rs.next()) {
+                                results.add(new Result(rs.getDouble("finalEnergyCost"),
+                                        rs.getDouble("finalGasCost"),
+                                        rs.getDouble("finalRentCost"),
+                                        rs.getInt("finalWageCost"),
+                                        rs.getDouble("finalMaterialCost"),
+                                        rs.getDouble("finalCost"),
+                                        rs.getString("login"),
+                                        rs.getInt("id")));
+                            }
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                        response = JSONParser.jsonFromObject(results.toArray(new Result[results.size()]));
+                        results.clear();
+                        out.writeUTF(response);
+                        out.flush();
+                        break;
+                    }
+
+                    case "searchResultUserByUser":
+                    {
+                        ArrayList<Result> results = new ArrayList<Result>();
+                        Result result = JSONParser.objectFromJson(query[1], Result.class);
+                        ResultService resultService = new ResultService();
+                        ResultSet rs = resultService.getResultUserByUser(result);
+                        try {
+                            while (rs.next()) {
+                                results.add(new Result(rs.getDouble("finalEnergyCost"),
+                                        rs.getDouble("finalGasCost"),
+                                        rs.getDouble("finalRentCost"),
+                                        rs.getInt("finalWageCost"),
+                                        rs.getDouble("finalMaterialCost"),
+                                        rs.getDouble("finalCost"),
+                                        rs.getString("login"),
                                         rs.getInt("id")));
                             }
                         } catch (Exception ex) {

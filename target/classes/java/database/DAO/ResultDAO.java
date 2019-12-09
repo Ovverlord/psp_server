@@ -13,4 +13,10 @@ public interface ResultDAO {
     ResultSet getResultByMaterialCost(Result result);
     void delete(Result result);
     void generateReport(Result result);
+
+    ResultSet getAllUsersResults();
+    ResultSet getResultUserByCost(Result result);
+    ResultSet getResultUserByWageCost(Result result);
+    ResultSet getResultUserByMaterialCost(Result result);
+    ResultSet getResultUserByUser(Result result);
 }

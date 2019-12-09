@@ -7,7 +7,29 @@ public class Result {
     private Integer finalWageCost;
     private Double finalMaterialCost;
     private Double finalCost;
+    private String login;
     private Integer id;
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+
+    public Result(Double finalEnergyCost, Double finalGasCost, Double finalRentCost, Integer finalWageCost,
+                  Double finalMaterialCost, Double finalCost, String login, Integer id) {
+        this.finalEnergyCost = finalEnergyCost;
+        this.finalGasCost = finalGasCost;
+        this.finalRentCost = finalRentCost;
+        this.finalWageCost = finalWageCost;
+        this.finalMaterialCost = finalMaterialCost;
+        this.finalCost = finalCost;
+        this.login = login;
+        this.id = id;
+    }
 
     public Result(Double finalEnergyCost, Double finalGasCost, Double finalRentCost, Integer finalWageCost,
                   Double finalMaterialCost, Double finalCost, Integer id) {

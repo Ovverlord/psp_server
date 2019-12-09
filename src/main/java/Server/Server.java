@@ -12,7 +12,7 @@ public class Server {
     public Server(){
         try{
             serverSocket = new ServerSocket(PORT);
-            System.out.println("Сервер запущен!");
+            System.out.println("Server start");
             while (true) {
                 clientSocket = serverSocket.accept();
                 ClientHandler client = new ClientHandler(clientSocket, this);

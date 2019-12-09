@@ -6,6 +6,7 @@ import database.configs.DBHandler;
 import database.consts.*;
 import network.Session;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -245,7 +246,11 @@ public class ResultService extends DBHandler implements ResultDAO {
     @Override
     public void generateReport(Result result)
     {
-        try(FileWriter writer = new FileWriter("UserReports\\Cost " + result.getFinalCost() + ".txt", false))
+        File folder = new File("UserReports\\"+session.getCurrentLogin());
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+        try(FileWriter writer = new FileWriter(folder+"\\Cost " + result.getFinalCost() + ".txt", false))
         {
             double energyPercent = new BigDecimal(result.getFinalEnergyCost()*100
                     /result.getFinalCost()).setScale(2, RoundingMode.UP).doubleValue();
@@ -275,5 +280,106 @@ public class ResultService extends DBHandler implements ResultDAO {
 
             System.out.println(ex.getMessage());
         }
+    }
+
+    @Override
+    public ResultSet getAllUsersResults() {
+        ResultSet resultSet = null;
+
+        String select = "SELECT * FROM psp.result INNER JOIN psp.user ON userid_result = psp.user.id;";
+        try
+        {
+            PreparedStatement prSt = null;
+            prSt = dbConnection.prepareStatement(select);
+            resultSet = prSt.executeQuery();
+        }
+        catch(SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+        return resultSet;
+    }
+
+    @Override
+    public ResultSet getResultUserByCost(Result result) {
+        ResultSet resultSet = null;
+
+        String select = "SELECT * FROM " + ResultTableConsts.RESULT_TABLE + " INNER JOIN psp.user ON userid_result = psp.user.id"
+                + " WHERE " + ResultTableConsts.RESULT_COST +
+                " = ? ";
+        try
+        {
+            PreparedStatement prSt = null;
+            prSt = dbConnection.prepareStatement(select);
+            prSt.setString(1, String.valueOf(result.getFinalCost()));
+            resultSet = prSt.executeQuery();
+        }
+        catch(SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+        return resultSet;
+    }
+
+    @Override
+    public ResultSet getResultUserByWageCost(Result result) {
+        ResultSet resultSet = null;
+
+        String select = "SELECT * FROM " + ResultTableConsts.RESULT_TABLE + " INNER JOIN psp.user ON userid_result = psp.user.id"
+                + " WHERE " + ResultTableConsts.RESULT_WAGE +
+                " = ? ";
+        try
+        {
+            PreparedStatement prSt = null;
+            prSt = dbConnection.prepareStatement(select);
+            prSt.setString(1, String.valueOf(result.getFinalWageCost()));
+            resultSet = prSt.executeQuery();
+        }
+        catch(SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+        return resultSet;
+    }
+
+    @Override
+    public ResultSet getResultUserByMaterialCost(Result result) {
+        ResultSet resultSet = null;
+
+        String select = "SELECT * FROM " + ResultTableConsts.RESULT_TABLE + " INNER JOIN psp.user ON userid_result = psp.user.id"
+                + " WHERE " + ResultTableConsts.RESULT_MATERIAL +
+                " = ? ";
+        try
+        {
+            PreparedStatement prSt = null;
+            prSt = dbConnection.prepareStatement(select);
+            prSt.setString(1, String.valueOf(result.getFinalMaterialCost()));
+            resultSet = prSt.executeQuery();
+        }
+        catch(SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+        return resultSet;
+    }
+
+    @Override
+    public ResultSet getResultUserByUser(Result result) {
+        ResultSet resultSet = null;
+
+        String select = "SELECT * FROM " + ResultTableConsts.RESULT_TABLE +
+                " INNER JOIN psp.user ON userid_result = psp.user.id WHERE psp.user.login = ? ";
+        try
+        {
+            PreparedStatement prSt = null;
+            prSt = dbConnection.prepareStatement(select);
+            prSt.setString(1, String.valueOf(result.getLogin()));
+            resultSet = prSt.executeQuery();
+        }
+        catch(SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+        return resultSet;
     }
 }
